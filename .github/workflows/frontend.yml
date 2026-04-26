@@ -1,0 +1,53 @@
+name: 🎨 Frontend CI/CD (Vue)
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      # Only trigger if Vue files change
+      - 'backend/web/modules/custom/vue_intranet_widget/vue-app/**'
+
+jobs:
+  lint:
+    name: 🔎 Type-Check Vue
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/web/modules/custom/vue_intranet_widget/vue-app/package-lock.json
+      - name: Install & Lint
+        run: |
+          cd backend/web/modules/custom/vue_intranet_widget/vue-app
+          npm ci
+          npm run build-only
+
+  build:
+    name: 📦 Build Production Assets
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile Vue
+        run: |
+          cd backend/web/modules/custom/vue_intranet_widget/vue-app
+          npm ci
+          npm run build
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vue-production-assets
+          path: backend/web/modules/custom/vue_intranet_widget/assets/
+
+  deploy:
+    name: 🚀 Deploy Frontend
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: vue-production-assets
+      - name: Deploy Frontend Assets
+        run: echo "Deploying compiled JS/CSS to server..."

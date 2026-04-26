@@ -1,0 +1,33 @@
+name: ⚙️ Backend CI/CD (Drupal)
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      # Trigger on backend changes...
+      - 'backend/**'
+      # ...BUT ignore changes that only happen in the Vue app
+      - '!backend/web/modules/custom/vue_intranet_widget/vue-app/**'
+
+jobs:
+  lint:
+    name: 🔎 PHP Lint & Config Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      - name: Syntax Check
+        run: find backend -type f -name "*.php" -o -name "*.module" | xargs -n 1 php -l
+      
+      # (Optional) If you have Composer, you would run 'composer validate' here
+
+  deploy:
+    name: 🚀 Deploy Backend
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy Drupal & Sync Config
+        run: echo "Deploying PHP and running 'drush cim' to sync config..."
