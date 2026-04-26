@@ -46,8 +46,20 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: vue-production-assets
-      - name: Deploy Frontend Assets
-        run: echo "Deploying compiled JS/CSS to server..."
+      - uses: actions/checkout@v4
+      
+      # (Frontend only: download your artifact here)
+
+      - name: 🟡 Deploy to STAGING
+        if: github.ref == 'refs/heads/dev'
+        run: |
+          echo "Deploying to STAGING environment..."
+          # Your staging deployment script goes here
+          # e.g., scp files to staging.neocosmo.com
+
+      - name: 🟢 Deploy to PRODUCTION
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "Deploying to PRODUCTION environment..."
+          # Your production deployment script goes here
+          # e.g., scp files to app.neocosmo.com
