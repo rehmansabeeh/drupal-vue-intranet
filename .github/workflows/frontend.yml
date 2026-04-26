@@ -5,11 +5,13 @@ on:
     branches: [ "main", "dev" ]
     paths:
       - 'backend/web/modules/custom/vue_intranet_widget/vue-app/**'
+      - '.github/workflows/frontend.yml'
   
   pull_request:
     branches: [ "main", "dev" ]
     paths:
       - 'backend/web/modules/custom/vue_intranet_widget/vue-app/**'
+      - '.github/workflows/frontend.yml'
 
 jobs:
   lint:

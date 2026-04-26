@@ -6,12 +6,14 @@ on:
     paths:
       - 'backend/**'
       - '!backend/web/modules/custom/vue_intranet_widget/vue-app/**'
+      - '.github/workflows/backend.yml'
       
   pull_request:
     branches: [ "main", "dev" ]
     paths:
       - 'backend/**'
       - '!backend/web/modules/custom/vue_intranet_widget/vue-app/**'
+      - '.github/workflows/backend.yml'
 
 jobs:
   lint:
