@@ -2,10 +2,16 @@ name: 🎨 Frontend CI/CD (Vue)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
     paths:
-      # Only trigger if Vue files change
       - 'backend/web/modules/custom/vue_intranet_widget/vue-app/**'
+      - '.github/workflows/frontend.yml'
+  
+  pull_request:
+    branches: [ "main", "dev" ]
+    paths:
+      - 'backend/web/modules/custom/vue_intranet_widget/vue-app/**'
+      - '.github/workflows/frontend.yml'
 
 jobs:
   lint:
@@ -30,24 +36,47 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
+      # FIX: We must set up Node 20 again because this is a fresh server!
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/web/modules/custom/vue_intranet_widget/vue-app/package-lock.json
+
       - name: Compile Vue
         run: |
           cd backend/web/modules/custom/vue_intranet_widget/vue-app
           npm ci
           npm run build
+          
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: vue-production-assets
           path: backend/web/modules/custom/vue_intranet_widget/assets/
 
-  deploy:
-    name: 🚀 Deploy Frontend
+  deploy-staging:
+    name: 🟡 Auto-Deploy to STAGING
     needs: build
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: vue-production-assets
-      - name: Deploy Frontend Assets
-        run: echo "Deploying compiled JS/CSS to server..."
+      - name: Deploy
+        run: echo "Automatically deploying to Staging..."
+
+  deploy-production:
+    name: 🟢 Manual Deploy to PRODUCTION
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production 
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: vue-production-assets
+      - name: Deploy
+        run: echo "Deploying to Production after human approval..."
