@@ -2,7 +2,7 @@ name: 🎨 Frontend CI/CD (Vue)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
     paths:
       # Only trigger if Vue files change
       - 'backend/web/modules/custom/vue_intranet_widget/vue-app/**'

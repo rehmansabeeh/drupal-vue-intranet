@@ -2,7 +2,7 @@ name: ⚙️ Backend CI/CD (Drupal)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
     paths:
       # Trigger on backend changes...
       - 'backend/**'
