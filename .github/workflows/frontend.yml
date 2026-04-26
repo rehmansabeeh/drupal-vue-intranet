@@ -4,7 +4,11 @@ on:
   push:
     branches: [ "main", "dev" ]
     paths:
-      # Only trigger if Vue files change
+      - 'backend/web/modules/custom/vue_intranet_widget/vue-app/**'
+  
+  pull_request:
+    branches: [ "main", "dev" ]
+    paths:
       - 'backend/web/modules/custom/vue_intranet_widget/vue-app/**'
 
 jobs:
@@ -30,36 +34,47 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
+      # FIX: We must set up Node 20 again because this is a fresh server!
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/web/modules/custom/vue_intranet_widget/vue-app/package-lock.json
+
       - name: Compile Vue
         run: |
           cd backend/web/modules/custom/vue_intranet_widget/vue-app
           npm ci
           npm run build
+          
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: vue-production-assets
           path: backend/web/modules/custom/vue_intranet_widget/assets/
 
-  deploy:
-    name: 🚀 Deploy Frontend
+  deploy-staging:
+    name: 🟡 Auto-Deploy to STAGING
     needs: build
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
     steps:
-      - uses: actions/checkout@v4
-      
-      # (Frontend only: download your artifact here)
+      - uses: actions/download-artifact@v4
+        with:
+          name: vue-production-assets
+      - name: Deploy
+        run: echo "Automatically deploying to Staging..."
 
-      - name: 🟡 Deploy to STAGING
-        if: github.ref == 'refs/heads/dev'
-        run: |
-          echo "Deploying to STAGING environment..."
-          # Your staging deployment script goes here
-          # e.g., scp files to staging.neocosmo.com
-
-      - name: 🟢 Deploy to PRODUCTION
-        if: github.ref == 'refs/heads/main'
-        run: |
-          echo "Deploying to PRODUCTION environment..."
-          # Your production deployment script goes here
-          # e.g., scp files to app.neocosmo.com
+  deploy-production:
+    name: 🟢 Manual Deploy to PRODUCTION
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production 
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: vue-production-assets
+      - name: Deploy
+        run: echo "Deploying to Production after human approval..."

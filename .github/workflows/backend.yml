@@ -4,9 +4,13 @@ on:
   push:
     branches: [ "main", "dev" ]
     paths:
-      # Trigger on backend changes...
       - 'backend/**'
-      # ...BUT ignore changes that only happen in the Vue app
+      - '!backend/web/modules/custom/vue_intranet_widget/vue-app/**'
+      
+  pull_request:
+    branches: [ "main", "dev" ]
+    paths:
+      - 'backend/**'
       - '!backend/web/modules/custom/vue_intranet_widget/vue-app/**'
 
 jobs:
@@ -20,27 +24,28 @@ jobs:
           php-version: '8.2'
       - name: Syntax Check
         run: find backend -type f -name "*.php" -o -name "*.module" | xargs -n 1 php -l
-      
-      # (Optional) If you have Composer, you would run 'composer validate' here
 
-  deploy:
-    name: 🚀 Deploy Backend
+  deploy-staging:
+    name: 🟡 Auto-Deploy Backend to STAGING
     needs: lint
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
-      
-
-      - name: 🟡 Deploy to STAGING
-        if: github.ref == 'refs/heads/dev'
+      - name: Deploy Backend & Sync Config
         run: |
-          echo "Deploying to STAGING environment..."
-          # Your staging deployment script goes here
-          # e.g., scp files to staging.neocosmo.com
+          echo "Automatically deploying PHP to Staging..."
+          echo "Running 'drush cim -y' to sync Drupal configuration..."
 
-      - name: 🟢 Deploy to PRODUCTION
-        if: github.ref == 'refs/heads/main'
+  deploy-production:
+    name: 🟢 Manual Deploy Backend to PRODUCTION
+    needs: lint
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production 
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy Backend & Sync Config
         run: |
-          echo "Deploying to PRODUCTION environment..."
-          # Your production deployment script goes here
-          # e.g., scp files to app.neocosmo.com
+          echo "Deploying PHP to Production after human approval..."
+          echo "Running 'drush cim -y' to sync Drupal configuration..."
