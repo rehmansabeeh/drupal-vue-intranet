@@ -1,0 +1,5 @@
+name: 'Vue Intranet Widget'
+type: module
+description: 'A custom intranet widget powered by Vue 3.'
+core_version_requirement: ^10 || ^11
+package: Custom

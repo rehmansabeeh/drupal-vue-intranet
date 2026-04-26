@@ -1,0 +1,27 @@
+# --- Drupal Core & Composer ---
+backend/vendor/
+backend/web/core/
+backend/web/modules/contrib/
+backend/web/themes/contrib/
+backend/web/profiles/contrib/
+backend/web/sites/*/settings.local.php
+backend/web/sites/*/files/
+backend/web/sites/*/private/
+
+# --- DDEV ---
+backend/.ddev/db-build/
+backend/.ddev/apache/
+backend/.ddev/.importdb*
+# Keep the config but ignore local overrides
+backend/.ddev/config.local.yaml
+
+# --- Vue / Frontend ---
+**/node_modules/
+**/dist/
+**/.DS_Store
+backend/web/modules/custom/vue_intranet_widget/vue-app/npm-debug.log*
+
+# --- OS/IDE ---
+.idea/
+.vscode/
+*.swp

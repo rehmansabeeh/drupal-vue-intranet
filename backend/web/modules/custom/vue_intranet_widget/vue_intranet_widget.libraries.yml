@@ -1,0 +1,9 @@
+vue_app:
+  version: 1.0
+  js:
+    assets/index.js: { attributes: { type: module } }
+  css:
+    theme:
+      assets/index.css: {}
+  dependencies:
+    - core/drupalSettings
