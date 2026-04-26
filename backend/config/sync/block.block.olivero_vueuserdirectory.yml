@@ -1,0 +1,20 @@
+uuid: 178eefe8-053d-4d68-bfa4-cdfe5254b7d8
+langcode: en
+status: true
+dependencies:
+  module:
+    - vue_intranet_widget
+  theme:
+    - olivero
+id: olivero_vueuserdirectory
+theme: olivero
+region: content
+weight: 0
+provider: null
+plugin: user_directory_block
+settings:
+  id: user_directory_block
+  label: 'Vue: User Directory'
+  label_display: '0'
+  provider: vue_intranet_widget
+visibility: {  }
