@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
-import DirectoryPage from '../src/pages/DirectoryPage.vue';
-import UserSearch from '../src/components/UserSearch.vue';
-import UserDirectory from '../src/components/UserDirectory.vue';
+import DirectoryPage from '../DirectoryPage.vue';
+import UserSearch from '../../components/UserSearch.vue';
+import UserDirectory from '../../components/UserDirectory.vue';
 import { createTestingPinia } from '@pinia/testing';
 
 describe('DirectoryPage.vue', () => {

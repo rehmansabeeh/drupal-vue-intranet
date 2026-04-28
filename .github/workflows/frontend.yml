@@ -1,54 +1,70 @@
 name: 🎨 Frontend CI/CD (Vue)
 
 on:
+  # Triggers on ALL branches and PRs (if these paths change)
   push:
-    branches: [ "main", "dev" ]
     paths:
       - 'backend/web/modules/custom/vue_intranet_widget/vue-app/**'
       - '.github/workflows/frontend.yml'
-  
   pull_request:
-    branches: [ "main", "dev" ]
     paths:
       - 'backend/web/modules/custom/vue_intranet_widget/vue-app/**'
       - '.github/workflows/frontend.yml'
 
 jobs:
-  lint:
-    name: 🔎 Type-Check Vue
+  # ---------------------------------------------------------
+  # 1. FAST CHECKS: Runs on EVERY Push and PR
+  # ---------------------------------------------------------
+  fast-checks:
+    name: ⚡ Lint & Unit Tests
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: backend/web/modules/custom/vue_intranet_widget/vue-app/package-lock.json
-      - name: Install & Lint
-        run: |
-          cd backend/web/modules/custom/vue_intranet_widget/vue-app
-          npm ci
-          npm run build-only
-
-  build:
-    name: 📦 Build Production Assets
-    needs: lint
-    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/web/modules/custom/vue_intranet_widget/vue-app
     steps:
       - uses: actions/checkout@v4
       
-      # FIX: We must set up Node 20 again because this is a fresh server!
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: backend/web/modules/custom/vue_intranet_widget/vue-app/package-lock.json
 
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: 🔎 Lint (Type-Check)
+        run: npm run build-only
+
+      - name: 🧪 Unit Tests (Vitest)
+        run: npm run test:unit
+
+  # ---------------------------------------------------------
+  # 2. BUILD: Runs ONLY on merge to Dev/Main
+  # ---------------------------------------------------------
+  build:
+    name: 📦 Build Production Assets
+    needs: fast-checks
+    runs-on: ubuntu-latest
+    # This ensures it ONLY runs when code is pushed/merged directly into dev or main
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+    defaults:
+      run:
+        working-directory: backend/web/modules/custom/vue_intranet_widget/vue-app
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/web/modules/custom/vue_intranet_widget/vue-app/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
       - name: Compile Vue
-        run: |
-          cd backend/web/modules/custom/vue_intranet_widget/vue-app
-          npm ci
-          npm run build
+        run: npm run build
           
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -56,9 +72,12 @@ jobs:
           name: vue-production-assets
           path: backend/web/modules/custom/vue_intranet_widget/assets/
 
+  # ---------------------------------------------------------
+  # 3a. DEPLOY (STAGING)
+  # ---------------------------------------------------------
   deploy-staging:
     name: 🟡 Auto-Deploy to STAGING
-    needs: build
+    needs: build 
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
     steps:
@@ -68,9 +87,12 @@ jobs:
       - name: Deploy
         run: echo "Automatically deploying to Staging..."
 
+  # ---------------------------------------------------------
+  # 3b. DEPLOY (PRODUCTION)
+  # ---------------------------------------------------------
   deploy-production:
     name: 🟢 Manual Deploy to PRODUCTION
-    needs: build
+    needs: build 
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment: production 
