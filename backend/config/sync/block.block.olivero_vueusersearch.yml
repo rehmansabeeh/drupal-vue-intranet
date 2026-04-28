@@ -1,6 +1,6 @@
-uuid: 3e4e6320-5601-4e19-8e49-ceed50e779df
+uuid: c5e05b7b-92d8-4839-94ab-c6a4a55d78c8
 langcode: en
-status: true
+status: false
 dependencies:
   module:
     - vue_intranet_widget
@@ -8,13 +8,13 @@ dependencies:
     - olivero
 id: olivero_vueusersearch
 theme: olivero
-region: header
+region: content_above
 weight: 0
 provider: null
 plugin: user_search_block
 settings:
   id: user_search_block
   label: 'Vue: User Search'
-  label_display: '0'
+  label_display: visible
   provider: vue_intranet_widget
 visibility: {  }

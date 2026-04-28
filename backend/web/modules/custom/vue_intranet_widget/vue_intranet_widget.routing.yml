@@ -1,0 +1,23 @@
+vue_intranet_widget.profile_page:
+  path: '/vue/profile/{user_uuid}'
+  defaults:
+    _controller: '\Drupal\vue_intranet_widget\Controller\ProfileController::page'
+    _title: 'User profile'
+  requirements:
+    _permission: 'access content'
+
+vue_intranet_widget.directory_page:
+  path: '/vue'
+  defaults:
+    _controller: '\Drupal\vue_intranet_widget\Controller\DirectoryController::page'
+    _title: 'User directory'
+  requirements:
+    _permission: 'access content'
+
+vue_intranet_widget.directory_page_alias:
+  path: '/vue/directory'
+  defaults:
+    _controller: '\Drupal\vue_intranet_widget\Controller\DirectoryController::page'
+    _title: 'User directory'
+  requirements:
+    _permission: 'access content'

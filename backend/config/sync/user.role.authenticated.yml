@@ -1,4 +1,4 @@
-uuid: 7e7c1302-c86f-4f12-85a3-b03aa97b255a
+uuid: 7caca68d-b103-4a48-b38e-719c2400310e
 langcode: en
 status: true
 dependencies:
@@ -21,6 +21,7 @@ permissions:
   - 'access comments'
   - 'access content'
   - 'access shortcuts'
+  - 'access user profiles'
   - 'delete own files'
   - 'post comments'
   - 'search content'

@@ -1,6 +1,6 @@
-uuid: 178eefe8-053d-4d68-bfa4-cdfe5254b7d8
+uuid: f53a7dbd-5c9a-49bb-8687-392581373e20
 langcode: en
-status: true
+status: false
 dependencies:
   module:
     - vue_intranet_widget
@@ -15,6 +15,6 @@ plugin: user_directory_block
 settings:
   id: user_directory_block
   label: 'Vue: User Directory'
-  label_display: '0'
+  label_display: visible
   provider: vue_intranet_widget
 visibility: {  }
