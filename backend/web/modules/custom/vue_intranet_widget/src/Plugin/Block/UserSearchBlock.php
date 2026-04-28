@@ -7,9 +7,10 @@ use Drupal\Core\Block\BlockBase;
  */
 class UserSearchBlock extends BlockBase {
   public function build() {
+    $current_user = \Drupal::currentUser();
     return [
-      '#markup' => '<div id="vue-search-mount"></div>', 
-      
+      '#markup' => '<div id="vue-search-mount"></div>',
+
       '#attached' => [
         'library' => [
           'vue_intranet_widget/vue_app',
@@ -17,6 +18,13 @@ class UserSearchBlock extends BlockBase {
         'drupalSettings' => [
           'vue_intranet_widget' => [
             'api_base' => '/jsonapi',
+            'csrf_token' => \Drupal::csrfToken()->get('rest'),
+            'current_user' => [
+              'id' => (int) $current_user->id(),
+              'name' => $current_user->getAccountName(),
+              'roles' => array_values($current_user->getRoles()),
+              'isAuthenticated' => $current_user->isAuthenticated(),
+            ],
           ],
         ],
       ],

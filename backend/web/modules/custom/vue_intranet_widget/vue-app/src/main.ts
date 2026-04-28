@@ -1,12 +1,19 @@
 import { createApp } from 'vue';
-import { createPinia } from 'pinia';
+import { createPinia, setActivePinia } from 'pinia';
 import './tailwind.css';
 import UserSearch from './components/UserSearch.vue';
 import UserDirectory from './components/UserDirectory.vue';
 import ProfilePage from './pages/ProfilePage.vue';
 import DirectoryPage from './pages/DirectoryPage.vue';
+import { useDrupalSettingsStore } from './stores/drupalSettingsStore';
 
 const pinia = createPinia();
+setActivePinia(pinia);
+
+// Parse window.drupalSettings into Pinia BEFORE any app mounts.
+// This is the single source of truth for all Drupal-injected state.
+const drupalStore = useDrupalSettingsStore();
+drupalStore.init(window.drupalSettings?.vue_intranet_widget);
 
 // 1. Logic for the Search Block
 const searchEl = document.getElementById('vue-search-mount');

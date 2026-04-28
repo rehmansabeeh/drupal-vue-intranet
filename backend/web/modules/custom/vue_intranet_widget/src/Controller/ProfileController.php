@@ -27,6 +27,8 @@ final class ProfileController extends ControllerBase {
       'profileUrl' => '/vue/profile/' . $user->uuid(),
     ];
 
+    $current_user = \Drupal::currentUser();
+
     return [
       '#markup' => '<div id="vue-profile-mount"></div>',
       '#attached' => [
@@ -37,6 +39,13 @@ final class ProfileController extends ControllerBase {
           'vue_intranet_widget' => [
             'profile_user' => $profile,
             'page_type' => 'profile',
+            'csrf_token' => \Drupal::csrfToken()->get('rest'),
+            'current_user' => [
+              'id' => (int) $current_user->id(),
+              'name' => $current_user->getAccountName(),
+              'roles' => array_values($current_user->getRoles()),
+              'isAuthenticated' => $current_user->isAuthenticated(),
+            ],
           ],
         ],
       ],

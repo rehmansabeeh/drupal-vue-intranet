@@ -24,6 +24,7 @@
 import { computed } from 'vue';
 import UserProfile from '../components/UserProfile.vue';
 import type { ProfileUser } from '../types/user';
+import { useDrupalSettingsStore } from '../stores/drupalSettingsStore';
 
 const defaultProfile: ProfileUser = {
   id: 0,
@@ -34,7 +35,8 @@ const defaultProfile: ProfileUser = {
   profileUrl: '',
 };
 
-const profile = window.drupalSettings?.vue_intranet_widget?.profile_user ?? defaultProfile;
+const drupalStore = useDrupalSettingsStore();
+const profile = drupalStore.profileUser ?? defaultProfile;
 
 const roleLabel = computed(() => {
   const roles = profile.roles.filter((role: string) => role !== 'authenticated');
