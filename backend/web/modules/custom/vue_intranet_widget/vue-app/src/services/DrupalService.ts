@@ -29,4 +29,7 @@ export default {
   getUsers(): Promise<AxiosResponse<DrupalJsonApiCollection<DrupalUserResource>>> {
     return client().get('/user/user');
   },
+  getArticles() {
+    return client().get('/node/article');
+  },
 };
