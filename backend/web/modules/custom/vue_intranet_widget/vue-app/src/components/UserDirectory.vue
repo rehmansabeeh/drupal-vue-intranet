@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted } from 'vue';
 import UserCard from './UserCard.vue';
 import UserCardSkeleton from './UserCardSkeleton.vue';
 import { useUserStore } from '../stores/userStore';
@@ -50,6 +50,5 @@ const filteredUsers = computed(() => {
 
 onMounted(() => {
   store.fetchUsers();
-  // store.getArticles();
 });
 </script>
